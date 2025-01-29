@@ -1,0 +1,62 @@
+package SocketProject;
+
+import java.io.*;
+import java.net.*;
+
+public class Exp3_Server {
+    public static void main(String[] args) {
+        ServerSocket server = null;
+        try {
+            server = new ServerSocket(52);
+            System.out.println("Waiting for the client's request");
+
+            Socket socket = server.accept();
+
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            System.out.println("Message from the client: " + ois.readObject());
+
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject("Hello");
+
+            ois.close();
+            oos.close();
+            socket.close();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Server error: " + e.getMessage());
+        } finally {
+            if (server != null) {
+                try {
+                    server.close();
+                    System.out.println("Shutting down the Socket server!!");
+                } catch (IOException e) {
+                    System.err.println("Error closing server: " + e.getMessage());
+                }
+            }
+        }
+    }
+}
+client code:-
+package SocketProject;
+
+import java.io.*;
+import java.net.*;
+
+public class Exp3_Client {
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket(InetAddress.getLocalHost(), 52);
+
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject("Hello");
+
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            System.out.println("Message from server: " + ois.readObject());
+
+            oos.close();
+            ois.close();
+            socket.close();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Client error: " + e.getMessage());
+        }
+    }
+}
